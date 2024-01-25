@@ -17,7 +17,7 @@ class UpdateList extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Text('Create A List'),
+            Text('Update Your List'),
             Spacer(),
             Text('Sign Out'),
           ],
@@ -28,7 +28,7 @@ class UpdateList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Create Your List',
+              'Update Your List',
               style: TextStyle(
                 fontSize: 30,
                 color: Color.fromARGB(255, 255, 255, 255),
@@ -71,23 +71,35 @@ class UpdateList extends StatelessWidget {
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ViewListsPage(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Create Your List'),
+                      child: Text('Update Your List'),
                     ),
                   ),
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ViewListsPage(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('View Lists'),
+                      child: Text('Back'),
                     ),
                   ),
                 ],
