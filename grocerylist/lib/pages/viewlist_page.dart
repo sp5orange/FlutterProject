@@ -7,7 +7,7 @@ import 'package:grocerylist/pages/updatelist_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
 class ViewListsPage extends StatelessWidget {
-  List<String> lists = ['List 1', 'List 2', 'List 3'];
+  List<String> lists = ['List 1', 'List 2'];
 
   @override
   Widget build(BuildContext context) {
