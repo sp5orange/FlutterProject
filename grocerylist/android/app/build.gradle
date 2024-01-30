@@ -21,6 +21,7 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+apply plugin: "com.google.gms.google-services"
 
 android {
     namespace "com.example.grocerylist"
@@ -64,4 +65,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    classpth "com.google.gms.google-services4.4.0"
+}
