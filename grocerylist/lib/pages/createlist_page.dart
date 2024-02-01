@@ -8,7 +8,7 @@ import 'package:grocerylist/pages/viewlist_page.dart';
 
 class CreateList extends StatelessWidget {
   const CreateList({Key? key}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
