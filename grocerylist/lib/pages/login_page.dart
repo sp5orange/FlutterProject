@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grocerylist/main.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 import 'package:grocerylist/pages/createaccount_page.dart';
+
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -13,8 +15,7 @@ class LoginPage extends StatelessWidget {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
-        email: _emailController.text
-            .trim(), // Added trim() to remove any leading or trailing white spaces
+        email: _emailController.text.trim(), // Added trim() to remove any leading or trailing white spaces
         password: _passwordController.text,
       );
 
@@ -40,44 +41,78 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // ... your existing Container with decoration
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image:
+                    AssetImage('images/resized_intense_shopping_pixel_2.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ... your existing Text widgets
+                Text(
+                  'Are you ready for an experience?',
+                  style: TextStyle(
+                    color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 3.0,
+                        color: Colors.black.withOpacity(0.7),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Login Now',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 3.0,
+                        color: Colors.black.withOpacity(0.7),
+                      ),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
-                    controller: _emailController, // Set the controller here
+                    controller: _emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.7),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
-                    controller: _passwordController, // And here
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.7),
                       border: OutlineInputBorder(),
                     ),
-                    obscureText: true,
                   ),
                 ),
-                // ... your existing SizedBox
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                   width: 300,
                   child: ElevatedButton(
@@ -89,7 +124,20 @@ class LoginPage extends StatelessWidget {
                     child: Text('Login'),
                   ),
                 ),
-                // ... your existing GestureDetector
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateAccount(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Need To Create An Account? Click Here",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),

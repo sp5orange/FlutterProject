@@ -40,16 +40,47 @@ class CreateAccount extends StatelessWidget {
     }
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // ... existing Container decoration and Center widget
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/resized_image_shopping.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // ... existing Text widgets for titles
+              Text(
+                'Are you ready for an experience?',
+                style: TextStyle(
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 3.0,
+                      color: Colors.black.withOpacity(0.7),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                'Create An Account',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 3.0,
+                      color: Colors.black.withOpacity(0.7),
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.all(18.0),
                 child: TextField(
@@ -60,7 +91,6 @@ class CreateAccount extends StatelessWidget {
                     fillColor: Colors.white.withOpacity(0.7),
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: TextInputType.emailAddress,
                 ),
               ),
               Padding(
@@ -73,10 +103,11 @@ class CreateAccount extends StatelessWidget {
                     fillColor: Colors.white.withOpacity(0.7),
                     border: OutlineInputBorder(),
                   ),
-                  obscureText: true,
                 ),
               ),
-              // ... existing SizedBox
+              SizedBox(
+                height: 20,
+              ),
               Container(
                 width: 300,
                 child: ElevatedButton(
@@ -88,7 +119,24 @@ class CreateAccount extends StatelessWidget {
                   child: Text('Create An Account'),
                 ),
               ),
-              // ... existing GestureDetector for navigating to LoginPage
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Already A User? Click Here',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      )),
+                ],
+              )
             ],
           ),
         ),
