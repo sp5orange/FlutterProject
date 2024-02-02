@@ -1,15 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/createaccount_page.dart';
-import 'package:grocerylist/pages/createlist_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/updatelist_page.dart';
-import 'package:grocerylist/pages/viewlist_page.dart';
 
 class CreateAccount extends StatelessWidget {
-  const CreateAccount({super.key});
+  CreateAccount({super.key});
 
-  @override
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _createUserWithEmailAndPassword(BuildContext context) async {
+    try {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        // Here, you could directly log in the user and navigate to the main page
+        // or send them to the LoginPage to log in manually
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LoginPage(), // or your main page
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'weak-password') {
+        message = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'The account already exists for that email.';
+      } else {
+        message = 'An error occurred. Please try again later.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -53,6 +84,7 @@ class CreateAccount extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(18.0),
                 child: TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     filled: true,
@@ -64,6 +96,7 @@ class CreateAccount extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(18.0),
                 child: TextField(
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     filled: true,
@@ -78,13 +111,7 @@ class CreateAccount extends StatelessWidget {
               Container(
                 width: 300,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(),
-                      ),
-                    );
-                  },
+                  onPressed: () => _createUserWithEmailAndPassword(context),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.blue,
                     onPrimary: Colors.white,

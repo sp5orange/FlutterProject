@@ -6,8 +6,30 @@ import 'package:grocerylist/pages/login_page.dart';
 import 'package:grocerylist/pages/updatelist_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UpdateList extends StatelessWidget {
   UpdateList({super.key});
+
+  final TextEditingController _listNameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  Future<void> createGroceryList(String listName, String description) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final items = description
+        .split(',')
+        .map((e) => e.trim())
+        .toList(); // Split by comma and trim spaces
+
+    await FirebaseFirestore.instance.collection('grocery lists').add({
+      'CreatedBy': uid,
+      'ListName': listName,
+      'items': items,
+      'sharedWith':
+          [], // Initialize with an empty array or as per your requirement
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +66,7 @@ class UpdateList extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(18.0),
               child: TextField(
+                controller: _listNameController,
                 decoration: InputDecoration(
                   labelText: 'List Title',
                   filled: true,
@@ -56,6 +79,7 @@ class UpdateList extends StatelessWidget {
               padding: EdgeInsets.all(18.0),
               child: TextField(
                 maxLines: null,
+                controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'List Description',
                   filled: true,
@@ -72,7 +96,10 @@ class UpdateList extends StatelessWidget {
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        createGroceryList(_listNameController.text,
+                            _descriptionController.text);
+
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => ViewListsPage(),
                           ),

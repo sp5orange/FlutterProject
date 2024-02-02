@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/createaccount_page.dart';
-import 'package:grocerylist/pages/createlist_page.dart';
-import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/updatelist_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grocerylist/main.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
+import 'package:grocerylist/pages/createaccount_page.dart';
+
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key});
+  LoginPage({Key? key}) : super(key: key);
 
-  @override
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _signInWithEmailAndPassword(BuildContext context) async {
+    try {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(), // Added trim() to remove any leading or trailing white spaces
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ViewListsPage(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided for that user.';
+      } else {
+        message = 'An error occurred. Please try again later.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -57,6 +89,7 @@ class LoginPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       filled: true,
@@ -68,6 +101,7 @@ class LoginPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       filled: true,
@@ -82,13 +116,7 @@ class LoginPage extends StatelessWidget {
                 Container(
                   width: 300,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ViewListsPage(),
-                        ),
-                      );
-                    },
+                    onPressed: () => _signInWithEmailAndPassword(context),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
                       onPrimary: Colors.white,
