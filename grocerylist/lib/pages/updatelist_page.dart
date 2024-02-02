@@ -11,20 +11,16 @@ class UpdateList extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();
 
   Future<void> createGroceryList(String listName, String description) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    final items = description
-        .split(',')
-        .map((e) => e.trim())
-        .toList(); // Split by comma and trim spaces
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final items = description.split(',').map((e) => e.trim()).toList(); // Split by comma and trim spaces
 
-    await FirebaseFirestore.instance.collection('grocery lists').add({
-      'CreatedBy': uid,
-      'ListName': listName,
-      'items': items,
-      'sharedWith':
-          [], // Initialize with an empty array or as per your requirement
-    });
-  }
+  await FirebaseFirestore.instance.collection('grocery lists').add({
+    'CreatedBy': uid,
+    'ListName': listName,
+    'items': items,
+    'sharedWith': [], // Initialize with an empty array or as per your requirement
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +30,7 @@ class UpdateList extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Text('Update Your List'),
+            Text('Create A List'),
             Spacer(),
             Text('Sign Out'),
           ],
@@ -45,7 +41,7 @@ class UpdateList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Update Your List',
+              'Create Your List',
               style: TextStyle(
                 fontSize: 30,
                 color: Color.fromARGB(255, 255, 255, 255),
@@ -91,8 +87,7 @@ class UpdateList extends StatelessWidget {
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        createGroceryList(_listNameController.text,
-                            _descriptionController.text);
+                        createGroceryList(_listNameController.text, _descriptionController.text);
 
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
@@ -104,7 +99,7 @@ class UpdateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Update Your List'),
+                      child: Text('Create Your List'),
                     ),
                   ),
                   SizedBox(
@@ -121,7 +116,7 @@ class UpdateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Back'),
+                      child: Text('View Lists'),
                     ),
                   ),
                 ],
