@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grocerylist/main.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 import 'package:grocerylist/pages/createaccount_page.dart';
 

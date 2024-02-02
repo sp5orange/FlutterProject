@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/createaccount_page.dart';
-import 'package:grocerylist/pages/createlist_page.dart';
-import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/updatelist_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -116,7 +111,7 @@ class UpdateList extends StatelessWidget {
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => ViewListsPage(),
                           ),
