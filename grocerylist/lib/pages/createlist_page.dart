@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/createaccount_page.dart';
-import 'package:grocerylist/pages/createlist_page.dart';
 import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/updatelist_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
 class CreateList extends StatelessWidget {
@@ -17,8 +14,8 @@ class CreateList extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Text('Create A List'),
-            Spacer(),
+            const Text('Create A List'),
+            const Spacer(),
             GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
@@ -27,7 +24,7 @@ class CreateList extends StatelessWidget {
                     ),
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Sign Out',
                   style: TextStyle(
                     color: Colors.black,
@@ -47,7 +44,7 @@ class CreateList extends StatelessWidget {
                 color: Colors.black,
                 shadows: <Shadow>[
                   Shadow(
-                    offset: Offset(0, 1),
+                    offset: const Offset(0, 1),
                     blurRadius: 3.0,
                     color: Colors.black.withOpacity(0.7),
                   ),
@@ -55,30 +52,30 @@ class CreateList extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'List Title',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
                 maxLines: null,
                 decoration: InputDecoration(
                   labelText: 'List Description',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
                   SizedBox(
@@ -87,7 +84,7 @@ class CreateList extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
@@ -95,7 +92,7 @@ class CreateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Create Your List'),
+                      child: const Text('Create Your List'),
                     ),
                   ),
                   SizedBox(
@@ -104,7 +101,7 @@ class CreateList extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
@@ -112,7 +109,7 @@ class CreateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('View Lists'),
+                      child: const Text('View Lists'),
                     ),
                   ),
                   SizedBox(
@@ -129,7 +126,7 @@ class CreateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Add/Remove A User To This List'),
+                      child: const Text('Add/Remove A User To This List'),
                     ),
                   ),
                 ],

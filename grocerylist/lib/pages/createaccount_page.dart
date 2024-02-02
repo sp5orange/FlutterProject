@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grocerylist/pages/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocerylist/pages/viewlist_page.dart';
 
 class CreateAccount extends StatelessWidget {
   CreateAccount({super.key});
@@ -17,14 +19,27 @@ class CreateAccount extends StatelessWidget {
       );
 
       if (userCredential.user != null) {
+
+        // After successful account creation, create a document in the 'users' collection
+        if (userCredential.user != null) {
+          final String email = userCredential.user!.email!;
+          final String uid = userCredential.user!.uid;
+
+          // Create a document with the user's email as the document ID and uid as a field
+          await FirebaseFirestore.instance.collection('users').doc(email).set({
+            'uid': uid,
+          });
+
+
         // Here, you could directly log in the user and navigate to the main page
         // or send them to the LoginPage to log in manually
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => LoginPage(), // or your main page
+            builder: (context) => ViewListsPage(), // or your main page
           ),
         );
       }
+    }
     } on FirebaseAuthException catch (e) {
       String message;
       if (e.code == 'weak-password') {
@@ -44,7 +59,7 @@ class CreateAccount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/resized_image_shopping.png'),
             fit: BoxFit.cover,
@@ -74,7 +89,7 @@ class CreateAccount extends StatelessWidget {
                   color: Colors.white,
                   shadows: <Shadow>[
                     Shadow(
-                      offset: Offset(0, 1),
+                      offset: const Offset(0, 1),
                       blurRadius: 3.0,
                       color: Colors.black.withOpacity(0.7),
                     ),
@@ -82,19 +97,19 @@ class CreateAccount extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(18.0),
+                padding: const EdgeInsets.all(18.0),
                 child: TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.7),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(18.0),
+                padding: const EdgeInsets.all(18.0),
                 child: TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -105,7 +120,7 @@ class CreateAccount extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
@@ -116,7 +131,7 @@ class CreateAccount extends StatelessWidget {
                     primary: Colors.blue,
                     onPrimary: Colors.white,
                   ),
-                  child: Text('Create An Account'),
+                  child: const Text('Create An Account'),
                 ),
               ),
               Row(
@@ -130,7 +145,7 @@ class CreateAccount extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Already A User? Click Here',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),

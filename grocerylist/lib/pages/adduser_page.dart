@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/createaccount_page.dart';
-import 'package:grocerylist/pages/createlist_page.dart';
-import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/updatelist_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
 class AddUserPage extends StatelessWidget {
