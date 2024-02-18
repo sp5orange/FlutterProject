@@ -116,27 +116,33 @@ class _ViewListsPageState extends State<ViewListsPage> {
     return email;
   }
 
-  void _deleteList(String listName) async {
-    final bool confirmDelete = await _confirmDeletion();
-    if (!confirmDelete) return;
+ void _deleteList(String listName) async {
+  final bool confirmDelete = await _confirmDeletion();
+  if (!confirmDelete) return;
 
-    try {
-      await FirebaseFirestore.instance
-          .collection('grocery lists')
-          .where('ListName', isEqualTo: listName)
-          .get()
-          .then((querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          doc.reference.delete();
-        }
-      });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('List deleted successfully.')));
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
-    }
+  try {
+    await FirebaseFirestore.instance
+        .collection('grocery lists')
+        .where('ListName', isEqualTo: listName)
+        .get()
+        .then((querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        doc.reference.delete();
+      }
+    });
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('List deleted successfully.')));
+
+    // Trigger a UI update after deletion
+    setState(() {
+      // This call fetches the updated list names and refreshes the UI
+      fetchListNames();
+    });
+  } catch (e) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
   }
+}
 
   Future<bool> _confirmDeletion() async {
     return await showDialog(
@@ -163,7 +169,9 @@ class _ViewListsPageState extends State<ViewListsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  return WillPopScope(
+    onWillPop: () async => false, // Prevents back button from working
+    child: Scaffold(
       appBar: AppBar(
         title: Text(
           'View Lists',
@@ -171,6 +179,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
         ),
         backgroundColor: Colors.blue,
         centerTitle: true,
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.exit_to_app), // Sign-out icon
@@ -215,7 +224,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => UpdateList(),
+                                    builder: (context) => UpdateList(listName: lists[index]),
                                   ),
                                 );
                               },
@@ -255,6 +264,6 @@ class _ViewListsPageState extends State<ViewListsPage> {
           ),
         ],
       ),
-    );
+    ));
   }
 }

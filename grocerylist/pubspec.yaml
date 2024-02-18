@@ -26,5 +26,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - images/resized_intense_shopping_pixel_2.png
+    - images/login_image.png
     - images/resized_image_shopping.png
