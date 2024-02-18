@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocerylist/pages/createlist_page.dart';
 import 'package:grocerylist/pages/login_page.dart';
 import 'package:grocerylist/pages/updatelist_page.dart';
 
@@ -16,9 +17,13 @@ class _ViewListsPageState extends State<ViewListsPage> {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
       await auth.signOut();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()),);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error logging out. Please try again.')),);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error logging out. Please try again.')),
+      );
     }
   }
 
@@ -29,8 +34,14 @@ class _ViewListsPageState extends State<ViewListsPage> {
 
     if (uid == null) return listNames;
 
-    final querySnapshot = await FirebaseFirestore.instance.collection('grocery lists').where('CreatedBy', isEqualTo: uid).get();
-    final sharedQuerySnapshot = await FirebaseFirestore.instance.collection('grocery lists').where('sharedWith', arrayContains: uid).get();
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('grocery lists')
+        .where('CreatedBy', isEqualTo: uid)
+        .get();
+    final sharedQuerySnapshot = await FirebaseFirestore.instance
+        .collection('grocery lists')
+        .where('sharedWith', arrayContains: uid)
+        .get();
 
     for (var doc in querySnapshot.docs) {
       listNames.add(doc.data()['ListName']);
@@ -48,24 +59,32 @@ class _ViewListsPageState extends State<ViewListsPage> {
     if (email == null || email.isEmpty) return;
 
     try {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(email).get();
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
       if (userDoc.exists) {
         final uid = userDoc.data()?['uid'];
         if (uid != null) {
-          await FirebaseFirestore.instance.collection('grocery lists').where('ListName', isEqualTo: listName).get().then((querySnapshot) {
+          await FirebaseFirestore.instance
+              .collection('grocery lists')
+              .where('ListName', isEqualTo: listName)
+              .get()
+              .then((querySnapshot) {
             querySnapshot.docs.forEach((document) {
               document.reference.update({
                 'sharedWith': FieldValue.arrayUnion([uid])
               });
             });
           });
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('List shared successfully!')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('List shared successfully!')));
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No user found for that email.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No user found for that email.')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to share list: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to share list: $e')));
     }
   }
 
@@ -102,46 +121,65 @@ class _ViewListsPageState extends State<ViewListsPage> {
     if (!confirmDelete) return;
 
     try {
-      await FirebaseFirestore.instance.collection('grocery lists').where('ListName', isEqualTo: listName).get().then((querySnapshot) {
+      await FirebaseFirestore.instance
+          .collection('grocery lists')
+          .where('ListName', isEqualTo: listName)
+          .get()
+          .then((querySnapshot) {
         for (var doc in querySnapshot.docs) {
           doc.reference.delete();
         }
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('List deleted successfully.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('List deleted successfully.')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
     }
   }
 
   Future<bool> _confirmDeletion() async {
     return await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content: const Text('Are you sure you want to delete this list?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirm Deletion'),
+              content: const Text('Are you sure you want to delete this list?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('View Lists'),
+        title: Text(
+          'View Lists',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.blue,
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.exit_to_app), // Sign-out icon
+            onPressed: () => _signOut(context),
+            tooltip: 'Sign out',
+            padding: EdgeInsets.only(right: 15),
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -175,7 +213,11 @@ class _ViewListsPageState extends State<ViewListsPage> {
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => UpdateList(),),);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateList(),
+                                  ),
+                                );
                               },
                             ),
                             IconButton(
@@ -193,15 +235,22 @@ class _ViewListsPageState extends State<ViewListsPage> {
             ),
           ),
           Container(
-            width: 300,
-            padding: const EdgeInsets.only(bottom: 50, top: 10),
-            child: ElevatedButton(
-              onPressed: () => _signOut(context),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-              ),
-              child: const Text('Sign out'),
+            margin: EdgeInsets.only(left: 250, bottom: 50),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add_circle),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateList()),
+                );
+              },
+              tooltip: 'Create A New List',
+              padding: EdgeInsets.only(),
+              color: Colors.blue,
+              iconSize: 60.0,
             ),
           ),
         ],

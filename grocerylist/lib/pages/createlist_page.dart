@@ -1,90 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/adduser_page.dart';
-import 'package:grocerylist/pages/login_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CreateList extends StatelessWidget {
-  const CreateList({Key? key}) : super(key: key);
-  
+  CreateList({super.key});
+
+  final TextEditingController _listNameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  Future<void> createGroceryList(String listName, String description) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final items = description
+        .split(',')
+        .map((e) => e.trim())
+        .toList(); // Split by comma and trim spaces
+
+    await FirebaseFirestore.instance.collection('grocery lists').add({
+      'CreatedBy': uid,
+      'ListName': listName,
+      'items': items,
+      'sharedWith':
+          [], // Initialize with an empty array or as per your requirement
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
         automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            const Text('Create A List'),
-            const Spacer(),
-            GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                )),
-          ],
+        title: Text(
+          'Create List',
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Create Your List',
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.black,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: const Offset(0, 1),
-                    blurRadius: 3.0,
-                    color: Colors.black.withOpacity(0.7),
-                  ),
-                ],
-              ),
-            ),
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: EdgeInsets.all(18.0),
               child: TextField(
+                controller: _listNameController,
                 decoration: InputDecoration(
                   labelText: 'List Title',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: EdgeInsets.all(18.0),
               child: TextField(
                 maxLines: null,
+                controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'List Description',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(top: 10),
+              padding: EdgeInsets.only(top: 10),
               child: Column(
                 children: [
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        createGroceryList(_listNameController.text,
+                            _descriptionController.text);
+
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => const ViewListsPage(),
+                            builder: (context) => ViewListsPage(),
                           ),
                         );
                       },
@@ -92,16 +90,16 @@ class CreateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: const Text('Create Your List'),
+                      child: Text('Create Your List'),
                     ),
                   ),
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => const ViewListsPage(),
+                            builder: (context) => ViewListsPage(),
                           ),
                         );
                       },
@@ -109,24 +107,7 @@ class CreateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: const Text('View Lists'),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 300,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AddUserPage(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
-                      ),
-                      child: const Text('Add/Remove A User To This List'),
+                      child: Text('View Lists'),
                     ),
                   ),
                 ],

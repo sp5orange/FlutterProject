@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 import 'package:grocerylist/pages/createaccount_page.dart';
 
-
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
@@ -14,7 +13,8 @@ class LoginPage extends StatelessWidget {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(), // Added trim() to remove any leading or trailing white spaces
+        email: _emailController.text
+            .trim(), // Added trim() to remove any leading or trailing white spaces
         password: _passwordController.text,
       );
 
@@ -40,7 +40,7 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -48,8 +48,7 @@ class LoginPage extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image:
-                    AssetImage('images/resized_intense_shopping_pixel_2.png'),
+                image: AssetImage('images/login_image.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -100,6 +99,7 @@ class LoginPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
+                    obscureText: true,
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',

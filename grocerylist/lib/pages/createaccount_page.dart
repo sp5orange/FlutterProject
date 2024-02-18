@@ -19,7 +19,6 @@ class CreateAccount extends StatelessWidget {
       );
 
       if (userCredential.user != null) {
-
         // After successful account creation, create a document in the 'users' collection
         if (userCredential.user != null) {
           final String email = userCredential.user!.email!;
@@ -30,16 +29,15 @@ class CreateAccount extends StatelessWidget {
             'uid': uid,
           });
 
-
-        // Here, you could directly log in the user and navigate to the main page
-        // or send them to the LoginPage to log in manually
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ViewListsPage(), // or your main page
-          ),
-        );
+          // Here, you could directly log in the user and navigate to the main page
+          // or send them to the LoginPage to log in manually
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => ViewListsPage(), // or your main page
+            ),
+          );
+        }
       }
-    }
     } on FirebaseAuthException catch (e) {
       String message;
       if (e.code == 'weak-password') {
@@ -55,7 +53,7 @@ class CreateAccount extends StatelessWidget {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -111,6 +109,7 @@ class CreateAccount extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: TextField(
+                  obscureText: true,
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',

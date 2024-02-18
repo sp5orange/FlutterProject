@@ -1,97 +1,226 @@
 import 'package:flutter/material.dart';
+import 'package:grocerylist/pages/adduser_page.dart';
+import 'package:grocerylist/pages/login_page.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UpdateList extends StatelessWidget {
-  UpdateList({super.key});
+class UpdateList extends StatefulWidget {
+  const UpdateList({Key? key}) : super(key: key);
 
-  final TextEditingController _listNameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
-  Future<void> createGroceryList(String listName, String description) async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  final items = description.split(',').map((e) => e.trim()).toList(); // Split by comma and trim spaces
-
-  await FirebaseFirestore.instance.collection('grocery lists').add({
-    'CreatedBy': uid,
-    'ListName': listName,
-    'items': items,
-    'sharedWith': [], // Initialize with an empty array or as per your requirement
-  });
+  @override
+  _UpdateListsPageState createState() => _UpdateListsPageState();
 }
+
+class _UpdateListsPageState extends State<UpdateList> {
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      await auth.signOut();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error logging out. Please try again.')),
+      );
+    }
+  }
+
+  Future<List<String>> fetchListNames() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final uid = auth.currentUser?.uid;
+    List<String> listNames = [];
+
+    if (uid == null) return listNames;
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('grocery lists')
+        .where('CreatedBy', isEqualTo: uid)
+        .get();
+    final sharedQuerySnapshot = await FirebaseFirestore.instance
+        .collection('grocery lists')
+        .where('sharedWith', arrayContains: uid)
+        .get();
+
+    for (var doc in querySnapshot.docs) {
+      listNames.add(doc.data()['ListName']);
+    }
+
+    for (var doc in sharedQuerySnapshot.docs) {
+      listNames.add(doc.data()['ListName']);
+    }
+
+    return listNames;
+  }
+
+  Future<void> shareList(String listName) async {
+    final email = await _promptForEmail();
+    if (email == null || email.isEmpty) return;
+
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
+      if (userDoc.exists) {
+        final uid = userDoc.data()?['uid'];
+        if (uid != null) {
+          await FirebaseFirestore.instance
+              .collection('grocery lists')
+              .where('ListName', isEqualTo: listName)
+              .get()
+              .then((querySnapshot) {
+            querySnapshot.docs.forEach((document) {
+              document.reference.update({
+                'sharedWith': FieldValue.arrayUnion([uid])
+              });
+            });
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('List shared successfully!')));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No user found for that email.')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to share list: $e')));
+    }
+  }
+
+  Future<String?> _promptForEmail() async {
+    String? email;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter user\'s email'),
+          content: TextField(
+            onChanged: (value) {
+              email = value;
+            },
+            decoration: const InputDecoration(hintText: "Email"),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return email;
+  }
+
+  void _deleteList(String listName) async {
+    final bool confirmDelete = await _confirmDeletion();
+    if (!confirmDelete) return;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('grocery lists')
+          .where('ListName', isEqualTo: listName)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('List deleted successfully.')));
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
+    }
+  }
+
+  Future<bool> _confirmDeletion() async {
+    return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirm Deletion'),
+              content: const Text('Are you sure you want to delete this list?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Text('Create A List'),
-            Spacer(),
-            Text('Sign Out'),
-          ],
+        centerTitle: true,
+        title: Text(
+          'Update Your List',
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.exit_to_app), // Sign-out icon
+            onPressed: () => _signOut(context),
+            tooltip: 'Sign out',
+            padding: EdgeInsets.only(right: 15),
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Create Your List',
-              style: TextStyle(
-                fontSize: 30,
-                color: Color.fromARGB(255, 255, 255, 255),
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(0, 1),
-                    blurRadius: 3.0,
-                    color: Colors.black.withOpacity(0.7),
-                  ),
-                ],
-              ),
-            ),
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
-                controller: _listNameController,
                 decoration: InputDecoration(
                   labelText: 'List Title',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
                 maxLines: null,
-                controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'List Description',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        createGroceryList(_listNameController.text, _descriptionController.text);
-
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
@@ -99,16 +228,16 @@ class UpdateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('Create Your List'),
+                      child: const Text('Update Your List'),
                     ),
                   ),
                   SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
@@ -116,7 +245,7 @@ class UpdateList extends StatelessWidget {
                         primary: Colors.blue,
                         onPrimary: Colors.white,
                       ),
-                      child: Text('View Lists'),
+                      child: const Text('Back'),
                     ),
                   ),
                 ],
