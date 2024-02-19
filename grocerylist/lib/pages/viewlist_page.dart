@@ -22,7 +22,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error logging out. Please try again.')),
+        const SnackBar(content: Text('Error logging out. Please try again.')),
       );
     }
   }
@@ -69,18 +69,18 @@ class _ViewListsPageState extends State<ViewListsPage> {
               .where('ListName', isEqualTo: listName)
               .get()
               .then((querySnapshot) {
-            querySnapshot.docs.forEach((document) {
+            for (var document in querySnapshot.docs) {
               document.reference.update({
                 'sharedWith': FieldValue.arrayUnion([uid])
               });
-            });
+            }
           });
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('List shared successfully!')));
+              const SnackBar(content: Text('List shared successfully!')));
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('No user found for that email.')));
+            const SnackBar(content: Text('No user found for that email.')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -131,7 +131,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
       }
     });
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('List deleted successfully.')));
+        .showSnackBar(const SnackBar(content: Text('List deleted successfully.')));
 
     // Trigger a UI update after deletion
     setState(() {
@@ -173,7 +173,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
     onWillPop: () async => false, // Prevents back button from working
     child: Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'View Lists',
           style: TextStyle(color: Colors.white),
         ),
@@ -185,8 +185,8 @@ class _ViewListsPageState extends State<ViewListsPage> {
             icon: const Icon(Icons.exit_to_app), // Sign-out icon
             onPressed: () => _signOut(context),
             tooltip: 'Sign out',
-            padding: EdgeInsets.only(right: 15),
-            color: Color.fromARGB(255, 255, 255, 255),
+            padding: const EdgeInsets.only(right: 15),
+            color: const Color.fromARGB(255, 255, 255, 255),
           ),
         ],
       ),
@@ -197,7 +197,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
               future: fetchListNames(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -244,7 +244,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 250, bottom: 50),
+            margin: const EdgeInsets.only(left: 250, bottom: 50),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -257,7 +257,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
                 );
               },
               tooltip: 'Create A New List',
-              padding: EdgeInsets.only(),
+              padding: const EdgeInsets.only(),
               color: Colors.blue,
               iconSize: 60.0,
             ),

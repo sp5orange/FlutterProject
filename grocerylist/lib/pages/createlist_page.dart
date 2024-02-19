@@ -32,7 +32,7 @@ class CreateList extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Create List',
           style: TextStyle(
             color: Colors.white,
@@ -45,19 +45,19 @@ class CreateList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
                 controller: _listNameController,
                 decoration: InputDecoration(
                   labelText: 'List Title',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(18.0),
               child: TextField(
                 maxLines: null,
                 controller: _descriptionController,
@@ -65,12 +65,12 @@ class CreateList extends StatelessWidget {
                   labelText: 'List Description',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.7),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
                   SizedBox(
@@ -82,15 +82,14 @@ class CreateList extends StatelessWidget {
 
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
-                      child: Text('Create Your List'),
+                      child: const Text('Create Your List'),
                     ),
                   ),
                   SizedBox(
@@ -99,15 +98,14 @@ class CreateList extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => ViewListsPage(),
+                            builder: (context) => const ViewListsPage(),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
-                      child: Text('View Lists'),
+                      child: const Text('View Lists'),
                     ),
                   ),
                 ],

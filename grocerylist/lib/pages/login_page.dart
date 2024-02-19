@@ -21,7 +21,7 @@ class LoginPage extends StatelessWidget {
       if (userCredential.user != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => ViewListsPage(),
+            builder: (context) => const ViewListsPage(),
           ),
         );
       }
@@ -46,7 +46,7 @@ class LoginPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('images/login_image.png'),
                 fit: BoxFit.cover,
@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
                     color: Colors.white,
                     shadows: <Shadow>[
                       Shadow(
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                         blurRadius: 3.0,
                         color: Colors.black.withOpacity(0.7),
                       ),
@@ -77,7 +77,7 @@ class LoginPage extends StatelessWidget {
                     color: Colors.white,
                     shadows: <Shadow>[
                       Shadow(
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                         blurRadius: 3.0,
                         color: Colors.black.withOpacity(0.7),
                       ),
@@ -85,19 +85,19 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(18.0),
+                  padding: const EdgeInsets.all(18.0),
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.7),
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(18.0),
+                  padding: const EdgeInsets.all(18.0),
                   child: TextField(
                     obscureText: true,
                     controller: _passwordController,
@@ -105,22 +105,21 @@ class LoginPage extends StatelessWidget {
                       labelText: 'Password',
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.7),
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Container(
+                SizedBox(
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () => _signInWithEmailAndPassword(context),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
+                      foregroundColor: Colors.white, backgroundColor: Colors.blue,
                     ),
-                    child: Text('Login'),
+                    child: const Text('Login'),
                   ),
                 ),
                 GestureDetector(
@@ -131,7 +130,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Need To Create An Account? Click Here",
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),

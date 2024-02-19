@@ -9,22 +9,24 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
-        options: FirebaseOptions(
+        options: const FirebaseOptions(
             apiKey: "AIzaSyCj1NdSOp6it6yjEfdhe3CbHBcpFeext5k",
             appId: "1:795193426475:web:816bb399d6780c98bde06e",
             messagingSenderId: "795193426475",
             projectId: "grocerylists-f8cb5"));
   }
   await Firebase.initializeApp(
-      options: FirebaseOptions(
+      options: const FirebaseOptions(
           apiKey: "AIzaSyCj1NdSOp6it6yjEfdhe3CbHBcpFeext5k",
           appId: "1:795193426475:web:816bb399d6780c98bde06e",
           messagingSenderId: "795193426475",
           projectId: "grocerylists-f8cb5"));
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,7 +45,7 @@ class MyApp extends StatelessWidget {
             }
 
             // If the user is not null, they are logged in; show ViewListsPage
-            return ViewListsPage();
+            return const ViewListsPage();
           }
 
           // Show a loading indicator while waiting for the authentication state

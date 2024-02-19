@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:grocerylist/pages/viewlist_page.dart';
 
 class AddUserPage extends StatelessWidget {
+  const AddUserPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add a User'),
+        title: const Text('Add a User'),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(18.0),
         child: Column(
           children: <Widget>[
             TextField(
@@ -19,42 +21,40 @@ class AddUserPage extends StatelessWidget {
                 labelText: 'User Email',
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.7),
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               width: 300,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ViewListsPage(),
+                      builder: (context) => const ViewListsPage(),
                     ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.blue,
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
                 ),
-                child: Text('Add User'),
+                child: const Text('Add User'),
               ),
             ),
-            Container(
+            SizedBox(
               width: 300,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ViewListsPage(),
+                      builder: (context) => const ViewListsPage(),
                     ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.blue,
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
                 ),
-                child: Text('Remove User'),
+                child: const Text('Remove User'),
               ),
             ),
           ],

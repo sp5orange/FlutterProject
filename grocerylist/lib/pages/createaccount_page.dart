@@ -33,7 +33,7 @@ class CreateAccount extends StatelessWidget {
           // or send them to the LoginPage to log in manually
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => ViewListsPage(), // or your main page
+              builder: (context) => const ViewListsPage(), // or your main page
             ),
           );
         }
@@ -73,7 +73,7 @@ class CreateAccount extends StatelessWidget {
                   color: Colors.white,
                   shadows: <Shadow>[
                     Shadow(
-                      offset: Offset(0, 1),
+                      offset: const Offset(0, 1),
                       blurRadius: 3.0,
                       color: Colors.black.withOpacity(0.7),
                     ),
@@ -115,20 +115,19 @@ class CreateAccount extends StatelessWidget {
                     labelText: 'Password',
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.7),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
               const SizedBox(
                 height: 20,
               ),
-              Container(
+              SizedBox(
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () => _createUserWithEmailAndPassword(context),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
                   ),
                   child: const Text('Create An Account'),
                 ),

@@ -60,7 +60,7 @@ class _UpdateListsPageState extends State<UpdateList> {
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error logging out. Please try again.')),
+          const SnackBar(content: Text('Error logging out. Please try again.')),
         );
       }
     }
@@ -71,7 +71,7 @@ class _UpdateListsPageState extends State<UpdateList> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Update Your List',
           style: TextStyle(
             color: Colors.white,
@@ -82,8 +82,8 @@ class _UpdateListsPageState extends State<UpdateList> {
             icon: const Icon(Icons.exit_to_app), // Sign-out icon
             onPressed: () => _signOut(context),
             tooltip: 'Sign out',
-            padding: EdgeInsets.only(right: 15),
-            color: Color.fromARGB(255, 255, 255, 255),
+            padding: const EdgeInsets.only(right: 15),
+            color: const Color.fromARGB(255, 255, 255, 255),
           ),
         ],
       ),
@@ -131,8 +131,7 @@ class _UpdateListsPageState extends State<UpdateList> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
                       child: const Text('Update Your List'),
                     ),
@@ -148,8 +147,7 @@ class _UpdateListsPageState extends State<UpdateList> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       ),
                       child: const Text('Back'),
                     ),
