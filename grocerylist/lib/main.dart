@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,14 +12,6 @@ Future main() async {
         options: const FirebaseOptions(
             apiKey: "AIzaSyCj1NdSOp6it6yjEfdhe3CbHBcpFeext5k",
             appId: "1:795193426475:web:816bb399d6780c98bde06e",
-            messagingSenderId: "795193426475",
-            projectId: "grocerylists-f8cb5"));
-  }
-  else if (Platform.isIOS) {
-    await Firebase.initializeApp(
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyCj1NdSOp6it6yjEfdhe3CbHBcpFeext5k",
-            appId: "1:795193426475:ios:76218c360d6e5c07bde06e",
             messagingSenderId: "795193426475",
             projectId: "grocerylists-f8cb5"));
   }

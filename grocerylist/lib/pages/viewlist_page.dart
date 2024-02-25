@@ -13,10 +13,18 @@ class ViewListsPage extends StatefulWidget {
 }
 
 class _ViewListsPageState extends State<ViewListsPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Reuse Firebase Auth instance
+  Future<List<String>>? _listNamesFuture; // To be used with FutureBuilder
+
+  @override
+  void initState() {
+    super.initState();
+    _listNamesFuture = fetchListNames(); // Initialize future in initState
+  }
+
   Future<void> _signOut(BuildContext context) async {
     try {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      await auth.signOut();
+      await _auth.signOut(); // Use the reused _auth instance
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
@@ -28,8 +36,7 @@ class _ViewListsPageState extends State<ViewListsPage> {
   }
 
   Future<List<String>> fetchListNames() async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final uid = auth.currentUser?.uid;
+    final uid = _auth.currentUser?.uid; // Use the reused _auth instance
     List<String> listNames = [];
 
     if (uid == null) return listNames;
@@ -116,33 +123,32 @@ class _ViewListsPageState extends State<ViewListsPage> {
     return email;
   }
 
- void _deleteList(String listName) async {
-  final bool confirmDelete = await _confirmDeletion();
-  if (!confirmDelete) return;
+  Future<void> _deleteList(String listName) async {
+    final bool confirmDelete = await _confirmDeletion();
+    if (!confirmDelete) return;
 
-  try {
-    await FirebaseFirestore.instance
-        .collection('grocery lists')
-        .where('ListName', isEqualTo: listName)
-        .get()
-        .then((querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        doc.reference.delete();
-      }
-    });
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('List deleted successfully.')));
+    try {
+      await FirebaseFirestore.instance
+          .collection('grocery lists')
+          .where('ListName', isEqualTo: listName)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('List deleted successfully.')));
 
-    // Trigger a UI update after deletion
-    setState(() {
-      // This call fetches the updated list names and refreshes the UI
-      fetchListNames();
-    });
-  } catch (e) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
+      // Trigger a UI update after deletion
+      setState(() {
+        // Re-fetch the updated list names to refresh the UI
+        _listNamesFuture = fetchListNames();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to delete list: $e')));
+    }
   }
-}
 
   Future<bool> _confirmDeletion() async {
     return await showDialog(
@@ -169,101 +175,102 @@ class _ViewListsPageState extends State<ViewListsPage> {
 
   @override
   Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async => false, // Prevents back button from working
-    child: Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'View Lists',
-          style: TextStyle(color: Colors.white),
+    return WillPopScope(
+      onWillPop: () async => false, // Prevents back button from working
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'View Lists',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.exit_to_app), // Sign-out icon
+              onPressed: () => _signOut(context),
+              tooltip: 'Sign out',
+              padding: const EdgeInsets.only(right: 15),
+              color: const Color.fromARGB(255, 255, 255, 255),
+            ),
+          ],
         ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.exit_to_app), // Sign-out icon
-            onPressed: () => _signOut(context),
-            tooltip: 'Sign out',
-            padding: const EdgeInsets.only(right: 15),
-            color: const Color.fromARGB(255, 255, 255, 255),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<List<String>>(
-              future: fetchListNames(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+        body: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<String>>(
+                future: _listNamesFuture, // Uses the pre-fetched list names future
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No lists available.'));
-                }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No lists available.'));
+                  }
 
-                List<String> lists = snapshot.data!;
+                  List<String> lists = snapshot.data!;
 
-                return ListView.builder(
-                  itemCount: lists.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(lists[index]),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.share),
-                              onPressed: () => shareList(lists[index]),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => UpdateList(listName: lists[index]),
-                                  ),
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              color: Colors.red,
-                              onPressed: () => _deleteList(lists[index]),
-                            ),
-                          ],
+                  return ListView.builder(
+                    itemCount: lists.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(lists[index]),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.share),
+                                onPressed: () => shareList(lists[index]),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateList(listName: lists[index]),
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                color: Colors.red,
+                                onPressed: () => _deleteList(lists[index]),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 250, bottom: 50),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
+            Container(
+              margin: const EdgeInsets.only(left: 250, bottom: 50),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.add_circle),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CreateList()),
+                  );
+                },
+                tooltip: 'Create A New List',
+                padding: const EdgeInsets.only(),
+                color: Colors.blue,
+                iconSize: 60.0,
+              ),
             ),
-            child: IconButton(
-              icon: const Icon(Icons.add_circle),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateList()),
-                );
-              },
-              tooltip: 'Create A New List',
-              padding: const EdgeInsets.only(),
-              color: Colors.blue,
-              iconSize: 60.0,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
