@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylist/pages/login_page.dart';
-import 'package:grocerylist/pages/viewlist_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocerylist/pages/login_page.dart';
+import 'package:grocerylist/pages/viewlist_page.dart';
 
 class UpdateList extends StatefulWidget {
   final String listName;
@@ -22,21 +22,12 @@ class ListItem {
 
 class _UpdateListsPageState extends State<UpdateList> {
   List<ListItem> _items = [];
+  final TextEditingController _listNameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     fetchListDetails();
-  }
-
-  final TextEditingController _listNameController = TextEditingController();
-  final TextEditingController _listDescriptionController = TextEditingController();
-
-  @override
-  void dispose() {
-    _listNameController.dispose();
-    _listDescriptionController.dispose();
-    super.dispose();
   }
 
   Future<void> fetchListDetails() async {
@@ -99,8 +90,12 @@ class _UpdateListsPageState extends State<UpdateList> {
             onChanged: (value) {
               item = value;
             },
-            decoration: const InputDecoration(hintText: "item name"),
+            decoration: InputDecoration(
+              hintText: "item name",
+              hintStyle: TextStyle(color: Theme.of(context).hintColor),
+            ),
             keyboardType: TextInputType.text,
+            style: TextStyle(color: Theme.of(context).textTheme.bodyText1?.color),
           ),
           actions: <Widget>[
             TextButton(
@@ -122,7 +117,6 @@ class _UpdateListsPageState extends State<UpdateList> {
 
     if (querySnapshot.docs.isNotEmpty) {
       final docRef = querySnapshot.docs.first.reference;
-      // Remove item from both lists in a single update
       await docRef.update({
         'items': FieldValue.arrayRemove([itemName]),
         'checkedItems': FieldValue.arrayRemove([itemName]),
@@ -132,7 +126,6 @@ class _UpdateListsPageState extends State<UpdateList> {
         SnackBar(content: Text('$itemName removed')),
       );
 
-      // Refresh the list to reflect the changes
       fetchListDetails();
     }
   }
@@ -157,124 +150,132 @@ class _UpdateListsPageState extends State<UpdateList> {
     }
 
     fetchListDetails();
-
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.blue,
-      centerTitle: true,
-      title: const Text(
-        'Update Your List',
-        style: TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.exit_to_app),
-          onPressed: () => _signOut(context),
-          tooltip: 'Sign out',
-          padding: const EdgeInsets.only(right: 15),
-          color: const Color.fromARGB(255, 255, 255, 255),
-        ),
-      ],
-    ),
-    body: SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: TextField(
-              controller: _listNameController,
-              decoration: InputDecoration(
-                labelText: 'List Title',
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.7),
-                border: const OutlineInputBorder(),
-              ),
-            ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: Text(
+          'Update Your List',
+          style: TextStyle(
+            color: Colors.white,
           ),
-          Container(
-            height: 300,
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await fetchListDetails();
-              },
-              child: ListView.builder(
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final item = _items[index];
-                  return Dismissible(
-                    key: Key(item.name), // Unique key for Dismissible widget
-                    background: Container(color: Colors.red), // Red background on swipe
-                    onDismissed: (direction) {
-                      deleteItem(widget.listName, item.name);
-                    },
-                    child: CheckboxListTile(
-                      title: Text(
-                        item.name,
-                        style: TextStyle(
-                          color: item.isChecked ? Colors.grey : Colors.black,
-                          decoration: item.isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-                        ),
-                      ),
-                      value: item.isChecked,
-                      onChanged: (bool? newValue) {
-                        setState(() {
-                          item.isChecked = newValue!;
-                        });
-                        updateItemStatus(widget.listName, item, newValue!);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(top: 10),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final itemName = await _promptForNewItem();
-                      if (itemName != null && itemName.isNotEmpty) {
-                        addItem(widget.listName, itemName);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue,
-                    ),
-                    child: const Text('Add Item'),
-                  ),
-                ),
-                SizedBox(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ViewListsPage(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue,
-                    ),
-                    child: const Text('Back'),
-                  ),
-                ),
-              ],
-            ),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () => _signOut(context),
+            tooltip: 'Sign out',
+            padding: const EdgeInsets.only(right: 15),
+            color: Colors.white,
           ),
         ],
       ),
-    ),
-  );
-}}
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: TextField(
+                controller: _listNameController,
+                decoration: InputDecoration(
+                  labelText: 'List Title',
+                  labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyText1?.color),
+                  filled: true,
+                  fillColor: Theme.of(context).cardColor,
+                  border: const OutlineInputBorder(),
+                  hintText: "Enter your list title",
+                  hintStyle: TextStyle(color: Theme.of(context).hintColor),
+                ),
+                style: TextStyle(color: Theme.of(context).textTheme.bodyText1?.color),
+              ),
+            ),
+            Container(
+              height: 300,
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await fetchListDetails();
+                },
+                child: ListView.builder(
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) {
+                    final item = _items[index];
+                    return Dismissible(
+                      key: Key(item.name),
+                      background: Container(color: Colors.red),
+                      onDismissed: (direction) {
+                        deleteItem(widget.listName, item.name);
+                      },
+                      child: CheckboxListTile(
+                        title: Text(
+                          item.name,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyText1?.color,
+                            decoration: item.isChecked ? TextDecoration.lineThrough : null,
+                          ),
+                        ),
+                        value: item.isChecked,
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            item.isChecked = newValue!;
+                          });
+                          updateItemStatus(widget.listName, item, newValue!);
+                        },
+                        checkColor: Theme.of(context).textTheme.bodyText1?.color,
+                        activeColor: Theme.of(context).colorScheme.secondary,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final itemName = await _promptForNewItem();
+                        if (itemName != null && itemName.isNotEmpty) {
+                          addItem(widget.listName, itemName);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: const Text('Add Item'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ViewListsPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: const Text('Back'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

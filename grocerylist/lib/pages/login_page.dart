@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           labelText: 'Email',
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
+                          fillColor: Theme.of(context).cardColor,
                           border: const OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
+                          fillColor: Theme.of(context).cardColor,
                           border: const OutlineInputBorder(),
                         ),
                         validator: (value) {

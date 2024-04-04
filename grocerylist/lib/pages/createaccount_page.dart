@@ -101,7 +101,7 @@ class CreateAccount extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.7),
+                    fillColor: Theme.of(context).cardColor,
                     border: const OutlineInputBorder(),
                   ),
                 ),
@@ -114,7 +114,7 @@ class CreateAccount extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.7),
+                    fillColor: Theme.of(context).cardColor,
                     border: const OutlineInputBorder(),
                   ),
                 ),
