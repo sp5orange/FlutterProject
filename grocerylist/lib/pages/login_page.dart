@@ -25,17 +25,20 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _signInWithEmailAndPassword(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
 
         if (userCredential.user != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ViewListsPage()));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ViewListsPage()));
         }
       } on FirebaseAuthException catch (e) {
         final message = _getErrorMessage(e.code);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
     }
   }
@@ -59,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('images/login_image.png'),
+                image: AssetImage('images/login_photo.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -143,18 +146,21 @@ class _LoginPageState extends State<LoginPage> {
                       child: ElevatedButton(
                         onPressed: () => _signInWithEmailAndPassword(context),
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue,
                         ),
                         child: const Text('Login'),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateAccount()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CreateAccount()));
                       },
                       child: const Text(
                         "Need To Create An Account? Click Here",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
