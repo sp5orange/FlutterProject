@@ -59,7 +59,7 @@ class CreateAccount extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/resized_image_shopping.png'),
+            image: AssetImage('images/create_photo.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -127,7 +127,8 @@ class CreateAccount extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => _createUserWithEmailAndPassword(context),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
                   ),
                   child: const Text('Create An Account'),
                 ),
