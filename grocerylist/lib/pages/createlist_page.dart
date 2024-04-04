@@ -22,7 +22,9 @@ class CreateList extends StatelessWidget {
       'ListName': listName,
       'items': items,
       'sharedWith':
-          [], // Initialize with an empty array or as per your requirement
+          [],
+      'checkedItems':
+          [],
     });
   }
 
